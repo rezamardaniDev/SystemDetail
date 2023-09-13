@@ -3,48 +3,54 @@ import psutil
 
 
 def operating_system_info():
+    print("")
+    print("------system info------")
     uname = platform.uname()
-    print(f"system: {uname.system}")
-    print(f"node name: {uname.node}")
-    print(f"release: {uname.release}")
-    print(f"version: {uname.version}")
-    print(f"machine: {uname.machine}")
-    print(f"processor: {uname.processor}")
+    print(f"- system: {uname.system}")
+    print(f"- node name: {uname.node}")
+    print(f"- release: {uname.release}")
+    print(f"- version: {uname.version}")
+    print(f"- machine: {uname.machine}")
+    print(f"- processor: {uname.processor}")
+    print(f"- battery: {psutil.sensors_battery().percent}")
+    print("")
 
-def prosesor():
-    print(psutil.cpu_count(logical=False))
-    print(psutil.cpu_count(logical=True))
-
+def process():
+    print("------process info------")
+    print(f"- Physical cores: {psutil.cpu_count(logical=False)}")
+    print(f"- Total cores: {psutil.cpu_count(logical=True)}")
     cpu_freq = psutil.cpu_freq()
-    print(cpu_freq.max)
-    print(cpu_freq.min)
-    print(cpu_freq.current)
-
+    print(f"- Max Frequency: {cpu_freq.max}")
+    print(f"- Min Frequency: {cpu_freq.min}")
+    print(f"- Current Frequency: {cpu_freq.current}")
+    print("------CPU Usage Per Core------")
     for i , percentage in enumerate(psutil.cpu_percent(percpu=True, interval=1)):
         print(f"core {i}: {percentage}%")
-
     print(f"totoal cpu usage: {psutil.cpu_percent()}%")
+    print("")
 
 
 def memory_details():
+    print("------virtual memory------")
     svmem = psutil.virtual_memory()
     print(f"total: {svmem.total}")
     print(f"available: {svmem.available}")
     print(f"used: {svmem.used}")
     print(f"percentage: {svmem.percent}%")
+    print("")
 
-    print(40 * "*")
-
+    print("------swap memory------")
     swap = psutil.swap_memory()
     print(f"total: {swap.total}")
     print(f"free: {swap.free}")
     print(f"used: {swap.used}")
     print(f"percentage: {swap.percent}%")
+    print("")
 
 def partition_disk():
+    print("------Disk info------")
     partition = psutil.disk_partitions()
     for part in partition:
-        print(10 * "-")
         print(f"device: {part.device} -> {part.mountpoint} -> {part.fstype}")
         try:
             partition_usage = psutil.disk_usage(part.mountpoint)
@@ -54,13 +60,16 @@ def partition_disk():
         print(f"used: {partition_usage.used}")
         print(f"free: {partition_usage.free}")
         print(f"percentage: {partition_usage.percent}%")
+        print("")
 
-    print(40 * "*")
+    print("")
     disk_io = psutil.disk_io_counters()
     print(f"total read: {disk_io.read_bytes}")
     print(f"total write: {disk_io.write_bytes}")
+    print("")
 
 def network_info():
+    print("------network checker------")
     if_address = psutil.net_if_addrs()
     for interface_name, interface_address in if_address.items():
         for address in interface_address:
@@ -77,13 +86,8 @@ def network_info():
     print(f"totla bytes sent: {net_io.bytes_sent}")
     print(f"totla bytes received: {net_io.bytes_recv}")
 
-print(psutil.sensors_battery().percent)
-
 operating_system_info()
-print(10 * '=')
+process()
 memory_details()
-print(10 * '=')
 partition_disk()
-print(10 * '=')
 network_info()
-
